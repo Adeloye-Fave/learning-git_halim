@@ -33,3 +33,9 @@ conda activate bioinfo
 for R1 in ${CUTADAPT_DIR}/*_1_trimmed.fastq; do
    SAMPLE=$(basename "$R1" _1_trimmed.fastq)
     R2=${CUTADAPT_DIR}/${SAMPLE}_2_trimmed.fastq
+    bwa-mem2 index Pf_refrence.fna
+    bwa-mem2 mem -t 8 -R "@RG\tID:${SAMPLE}\tSM:${SAMPLE}\tPL:ILLUMINA" Pf_refrence.fna $R1 $R2 > $BWA_MEM2_OUTPUT/$SAMPLE.>
+    samtools view -Sb $BWA_MEM2_OUTPUT/$SAMPLE.sam > $BAM_FILES/$SAMPLE.bam
+    echo "Bam generated and Sorting $SAMPLE is running"
+    samtools sort $BAM_FILES/$SAMPLE.bam -o $SORTED_BAM/$SAMPLE.sorted.bam
+    echo "Sorting completed and Indexing $SAMPLE is running
